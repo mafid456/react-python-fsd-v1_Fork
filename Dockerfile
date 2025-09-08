@@ -5,14 +5,14 @@ FROM node:18-alpine AS frontend-build
 
 WORKDIR /frontend
 
-# Copy frontend dependencies
+# Install frontend dependencies
 COPY frontend/package*.json ./
 RUN npm install
 
-# Copy frontend source
+# Copy all frontend source
 COPY frontend/ .
 
-# Build frontend
+# Build Vite app
 RUN npm run build
 
 
@@ -23,7 +23,7 @@ FROM python:3.11-slim AS backend
 
 WORKDIR /app
 
-# Install dependencies
+# Install backend dependencies
 COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -36,5 +36,5 @@ COPY --from=frontend-build /frontend/dist ./app/static
 # Expose backend port
 EXPOSE 3000
 
-# Start backend (FastAPI with uvicorn)
+# Start backend (FastAPI assumed)
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "3000"]
